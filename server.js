@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const path=require("path");
-const multer=require("multer");
+const path = require("path");
+const multer = require("multer");
 const UserDetails = require("./models/userDetails");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -15,76 +15,68 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 // MongoDB connection
-const dburl = 'mongodb://0.0.0.0/TicketsManagementSystem';
+const dburl =
+  "mongodb+srv://harshdeep542001:~Harsh~8118@cluster0.znwgumj.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(dburl, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-    console.log('Connected to MongoDB');
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", () => {
+  console.log("Connected to MongoDB");
 });
 
-
-
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads"); // Destination folder for uploaded files
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + "-" + file.originalname); // Unique filename
-    },
-  });
-  
-  const upload = multer({ storage });
+  destination: (req, file, cb) => {
+    cb(null, "uploads"); // Destination folder for uploaded files
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname); // Unique filename
+  },
+});
+
+const upload = multer({ storage });
 
 // Routes
 app.get("/", function (req, res) {
-    res.render("navigation");
+  res.render("navigation");
 });
 
 app.get("/user", function (req, res) {
-    res.render("user");
+  res.render("user");
 });
 
 app.get("/admin", function (req, res) {
-    res.render("admin");
+  res.render("admin");
 });
 
 app.get("/resolver", function (req, res) {
-    res.render("resolver");
+  res.render("resolver");
 });
 
-
-
-
-
-
 app.post("/user", upload.single("file"), async (req, res) => {
-    try {
-      const { name, email, phone, issue, note } = req.body;
-      const file = req.file ? req.file.filename : "";
-  
-      const userDetailsInstance = new UserDetails({
-        userDetails: {
-          name,
-          email,
-          phone,
-          issue,
-          file,
-          note,
-        },
-      });
-  
-      await userDetailsInstance.save();
-      res.status(201).json({ message: "Ticket raised successfully" });
-    } catch (error) {
-      console.error("Error creating ticket:", error);
-      res.status(500).json({ message: "An error occurred" });
-    }
-  });
+  try {
+    const { name, email, phone, issue, note } = req.body;
+    const file = req.file ? req.file.filename : "";
+
+    const userDetailsInstance = new UserDetails({
+      name,
+      email,
+      phone,
+      issue,
+      file,
+      note,
+    });
+
+    await userDetailsInstance.save();
+    res.status(201).json({ message: "Ticket raised successfully" });
+  } catch (error) {
+    console.error("Error creating ticket:", error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+});
 
 // Start the server
 const port = 8080;
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
