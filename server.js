@@ -16,7 +16,7 @@ app.use(express.json());
 
 // MongoDB connection
 const dburl =
-  "mongodb+srv://harshdeep542001:~Harsh~8118@cluster0.znwgumj.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://harshdeep542001:<password>@cluster0.znwgumj.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(dburl, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
